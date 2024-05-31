@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/2marks/go-expense-tracker-api/config"
@@ -13,7 +14,7 @@ var secretKey = []byte(config.Envs.JwtSecret)
 func GenerateAuthToken(userId int) (string, error) {
 	expirationTime := time.Duration(config.Envs.JwtExpirationInHours) * time.Hour
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"userId":    userId,
+		"userId":    strconv.Itoa(userId),
 		"expiresAt": time.Now().Add(expirationTime).Unix(),
 		"issuedAt":  time.Now().Unix(),
 	})
@@ -42,7 +43,8 @@ func ValidateAuthToken(tokenString string) (int, error) {
 	}
 
 	claims := token.Claims.(jwt.MapClaims)
-	userId := claims["userId"]
+	userIdStr := claims["userId"].(string)
+	userId, _ := strconv.Atoi(userIdStr)
 
-	return userId.(int), nil
+	return userId, nil
 }
