@@ -37,7 +37,12 @@ func (d *Database) InitDatabase() *gorm.DB {
 }
 
 func (d *Database) RunMigrations(db *gorm.DB) {
-	err := db.AutoMigrate(&types.User{})
+	err := db.AutoMigrate(
+		&types.User{},
+		&types.PasswordResetLog{},
+		&types.Expense{},
+		&types.Category{},
+	)
 
 	if err != nil {
 		log.Fatalf("error while running database migrations: %s", err.Error())

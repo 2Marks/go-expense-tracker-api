@@ -13,6 +13,7 @@ func main() {
 	newDatabase := database.NewDatabase()
 	db := newDatabase.InitDatabase()
 	newDatabase.RunMigrations(db)
+	newDatabase.RunSeeds(db)
 
 	apiServer := api.NewApiServer(db, fmt.Sprintf(":%s", config.Envs.Port))
 	if err := apiServer.Run(); err != nil {
