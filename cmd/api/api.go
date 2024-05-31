@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/2marks/go-expense-tracker-api/internal/auth"
+	"github.com/2marks/go-expense-tracker-api/internal/users"
+	"github.com/2marks/go-expense-tracker-api/middlewares"
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
@@ -28,6 +30,19 @@ func (a *ApiServer) Run() error {
 	authHandler := auth.NewHandler(authService)
 	authHandler.RegisterRoutes(subRouter)
 	/** end auth routes */
+
+	/** start auth middleware */
+	authMiddleware := middlewares.NewAuthMiddleware()
+	/** end auth middleware */
+
+	/** start users routes */
+	userRepository := users.NewRepository(a.db)
+	userService := users.NewService(userRepository)
+	userHandler := users.NewHandler(userService)
+	userRouter := subRouter.PathPrefix("/users").Subrouter()
+	userRouter.Use(authMiddleware.Authenticate)
+	userHandler.RegisterRoutes(userRouter)
+	/** end users routes */
 
 	fmt.Println("server listening on", a.addr)
 
