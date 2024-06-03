@@ -3,6 +3,8 @@ package utils
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/2marks/go-expense-tracker-api/errors"
 )
 
 func writeResponseToJson(w http.ResponseWriter, statusCode int, response interface{}) error {
@@ -28,5 +30,11 @@ func WriteErroresponseToJson(w http.ResponseWriter, statusCode int, err error) e
 		"message": err.Error(),
 	}
 
-	return writeResponseToJson(w, statusCode, jsonResponse)
+	_code := statusCode
+	errHttp, ok := err.(*errors.ErrHttpRequest)
+	if ok {
+		_code = errHttp.StatusCode
+	}
+
+	return writeResponseToJson(w, _code, jsonResponse)
 }
