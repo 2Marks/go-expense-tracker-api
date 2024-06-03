@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/2marks/go-expense-tracker-api/internal/auth"
+	"github.com/2marks/go-expense-tracker-api/internal/expenses"
 	"github.com/2marks/go-expense-tracker-api/internal/users"
 	"github.com/2marks/go-expense-tracker-api/middlewares"
 	"github.com/gorilla/mux"
@@ -34,6 +35,15 @@ func (a *ApiServer) Run() error {
 	/** start auth middleware */
 	authMiddleware := middlewares.NewAuthMiddleware()
 	/** end auth middleware */
+
+	/** start expense routes */
+	expenseRepository := expenses.NewRepository(a.db)
+	expenseService := expenses.NewService(expenseRepository)
+	expenseHandler := expenses.NewHandler(expenseService)
+	expenseRouter := subRouter.PathPrefix("/expenses").Subrouter()
+	expenseRouter.Use(authMiddleware.Authenticate)
+	expenseHandler.RegisterRoutes(expenseRouter)
+	/** end expense routes */
 
 	/** start users routes */
 	userRepository := users.NewRepository(a.db)
