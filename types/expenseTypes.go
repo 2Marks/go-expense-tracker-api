@@ -18,13 +18,6 @@ type Expense struct {
 	UpdatedAt     time.Time `json:"updatedAt" gorm:"autoUpdateTime;type:TIMESTAMP"`
 }
 
-type Category struct {
-	ID          uint   `gorm:"primaryKey"`
-	Name        string `gorm:"not null;size:100;uniqueIndex:name_createdbyid"`
-	IsSystem    bool   `gorm:"default:1"`
-	CreatedById uint   `gorm:"default:0;index;uniqueIndex:name_createdbyid"`
-}
-
 type CreateExpenseDTO struct {
 	Category      string    `json:"category"`
 	PaymentMethod string    `json:"paymentMethod"`

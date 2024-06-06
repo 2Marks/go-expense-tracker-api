@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/2marks/go-expense-tracker-api/internal/auth"
+	"github.com/2marks/go-expense-tracker-api/internal/categories"
 	"github.com/2marks/go-expense-tracker-api/internal/expenses"
 	"github.com/2marks/go-expense-tracker-api/internal/users"
 	"github.com/2marks/go-expense-tracker-api/middlewares"
@@ -44,6 +45,15 @@ func (a *ApiServer) Run() error {
 	expenseRouter.Use(authMiddleware.Authenticate)
 	expenseHandler.RegisterRoutes(expenseRouter)
 	/** end expense routes */
+
+	/* start category routes */
+	categoryRepository := categories.NewRepository(a.db)
+	categoryService := categories.NewService(categoryRepository)
+	categoryHandler := categories.NewHandler(categoryService)
+	categoryRouter := subRouter.PathPrefix("/categories").Subrouter()
+	categoryRouter.Use(authMiddleware.Authenticate)
+	categoryHandler.RegisterRoutes(categoryRouter)
+	/** end category routes */
 
 	/** start users routes */
 	userRepository := users.NewRepository(a.db)
