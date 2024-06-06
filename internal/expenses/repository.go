@@ -3,7 +3,7 @@ package expenses
 import (
 	"fmt"
 
-	"github.com/2marks/go-expense-tracker-api/errors"
+	"github.com/2marks/go-expense-tracker-api/errs"
 	"github.com/2marks/go-expense-tracker-api/types"
 	"gorm.io/gorm"
 )
@@ -59,7 +59,7 @@ func (r *Repository) GetById(userId int, id int) (*types.Expense, error) {
 
 	if result.Error != nil {
 		fmt.Printf("error while fetching expense by id. err:%s \n", result.Error.Error())
-		return nil, errors.ErrResourceNotFound(fmt.Errorf("expense not found"))
+		return nil, errs.ErrResourceNotFound(fmt.Errorf("expense not found"))
 	}
 
 	return expense, nil

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/2marks/go-expense-tracker-api/errors"
+	"github.com/2marks/go-expense-tracker-api/errs"
 	"github.com/2marks/go-expense-tracker-api/types"
 )
 
@@ -20,12 +20,12 @@ func NewService(repo types.ExpenseRepository) *Service {
 func (s *Service) Create(userId int, params types.CreateExpenseDTO) error {
 	category, err := s.repo.GetCategoryByName(params.Category)
 	if err != nil {
-		return errors.ErrResourceNotFound(err)
+		return errs.ErrResourceNotFound(err)
 	}
 
 	ok, paymentMethodStr := isValidPaymentMethod(params.PaymentMethod)
 	if !ok {
-		return errors.ErrUnprocessableEntity(fmt.Errorf("supplied payment method(%s) not valid. valid options includes: %s", params.PaymentMethod, paymentMethodStr))
+		return errs.ErrUnprocessableEntity(fmt.Errorf("supplied payment method(%s) not valid. valid options includes: %s", params.PaymentMethod, paymentMethodStr))
 	}
 
 	amountCurrency := params.Currency
@@ -34,7 +34,7 @@ func (s *Service) Create(userId int, params types.CreateExpenseDTO) error {
 	}
 
 	if amountCurrency == "" {
-		return errors.ErrUnprocessableEntity(fmt.Errorf("kindly supply the amount currency to continue"))
+		return errs.ErrUnprocessableEntity(fmt.Errorf("kindly supply the amount currency to continue"))
 	}
 
 	expense := &types.Expense{
